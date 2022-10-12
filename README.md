@@ -9,17 +9,22 @@ This workshop follows through sending transactions on Arbitrum, inspecting their
 * L1/L2 gas -https://developer.arbitrum.io/arbos/gas
 * Transaction lifecycle - https://developer.arbitrum.io/tx-lifecycle
 * ArbOS precompiles - https://developer.arbitrum.io/arbos/precompiles
+* RLP encoding - https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/
 
 ## Pre-requisites
 Please install the following, if you don't have them already
 * An ethereum wallet (eg metamasdk browser extension)
-* [curl](https://curl.se/) - probably installed by default
-* [Foundry](https://github.com/foundry-rs/foundry)
+* [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - version control system
+* [curl](https://curl.se/) - A http request util, probably installed by default
+* [Foundry](https://github.com/foundry-rs/foundry) - tools for, amongst other things, making ethereum JSON-RPC requests
     - run: `curl -L https://foundry.paradigm.xyz | bash`
-    - then run: `foundryup`
+    - followed by `foundryup`
 * [jq](https://stedolan.github.io/jq/) - might be installed by default
-    - Mac OS can be installed with - `brew install jq`
-    - 
+    - Mac OS - `brew install jq`
+    - Ubuntu - `apt get install jq` 
+* [brotli](https://github.com/google/brotli) - compression algorithm
+    - Mac OS - `brew install brotli`
+    - Ubuntu - `apt get install brotli` 
 
 You may need to open a new shell after installing these
 
@@ -79,7 +84,7 @@ TX_ID=<tx id>
     ```
     echo $GAS_USED_L1
     ```
-    Is the value what you expected? You might have expected this value to be much lower as all we need L1 gas for is to pay for call data. Call data is only 16 gas per byte, and standard token transfer only has around 190 bytes when RLP encoded. A quick calculation shows that we should have expected to use around 16 * 180 = 2880 units of l1 gas which probably isn't the same order of magnitude as the value you have for `gasUsedForL1`. But remember that although `gasUsedForL1` pays for L1 costs, it is in units of L2 gas. We'll explore that concept more in the nexts stepts.
+    Is the value what you expected? You might have expected this value to be much lower as all we need L1 gas for is to pay for call data. Call data is only 16 gas per byte, and standard token transfer only has around 190 bytes when [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encoded. A quick calculation shows that we should have expected to use around 16 * 180 = 2880 units of l1 gas which probably isn't the same order of magnitude as the value you have for `gasUsedForL1`. But remember that although `gasUsedForL1` pays for L1 costs, it is in units of L2 gas. We'll explore that concept more in the nexts stepts.
 4. Also store the value of blockhash and block number for later use:
     ```
     L2_BLOCKHASH=<tx.blockHash>
@@ -121,7 +126,7 @@ TX_ID=<tx id>
     ```
 
 ### Step 5 - comparison to actual bytes
-1. We can now RLP encode the transaction and measure the number of bytes. Note that we don't expect this to be exactly the same due to a number of reasons:
+1. We can now [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encode the transaction and measure the number of bytes. Note that we don't expect this to be exactly the same due to a number of reasons:
     - The gas used for L1 includes some compression factor - this isn't as high as when we the transaction is included in a batch, but it is a factor
     - There is also a small amount L1 gas that must be paid for batch overheads
 2. RLP encode the transaction:
@@ -133,23 +138,6 @@ TX_ID=<tx id>
     ```
     echo $(( (${#TX_RLP} - 2) / 2 ))
     ```
-
-### Step 5 - How to estimate L1 costs before sending
-1. The L2 transaction receipt contains a record of the amount of gas that was spent on L1 data costs. However, just like with L2 gas, developers need to be able to estimate how much L1 gas is required for a given transaction in order to set the correct gas limit. When calling `eth_estimateGas` on an Arbitrum node the returned value is the total amount of gas required - L2 gas + L1 gas in units of L2 gas. However it's possible to inspect the breakdown of this gas estimate by calling the [gasEstimateComponents](https://github.com/OffchainLabs/nitro/blob/v2.0.7/contracts/src/node-interface/NodeInterface.sol#L84) function on the NodeInterface contract at address 0x00000000000000000000000000000000000000C8.
-2. Let's first get the input arguments we need to call the NodeInterface.
-    ```
-    TX_DATA=$(cast tx --rpc-url $ARB_RPC $TX_ID input)
-    echo $TX_DATA
-    TX_TO=$(cast tx --rpc-url $ARB_RPC $TX_ID to)
-    echo $TX_TO
-    TX_FROM=$(cast tx --rpc-url $ARB_RPC $TX_ID from)
-    echo $TX_FROM
-    ```
-3. Then call the estimate function:
-    ```
-    cast call --rpc-url $ARB_RPC -b $L2_BLOCKHASH --from $TX_FROM 0x00000000000000000000000000000000000000C8 "function gasEstimateComponents(address to, bool contractCreation, bytes calldata data) external payable returns (uint64 gasEstimate, uint64 gasEstimateForL1, uint256 baseFee, uint256 l1BaseFeeEstimate)" $TX_TO false $TX_DATA
-     ```
-4. The values returned are: `gasEstimate, gasEstimateForL1, baseFee, l1BaseFeeEstimate`
 
 ### Step 6 - Exploring the batch
 1. The data associated with transactions is submitted to Ethereum in batches. Each of these batches is compressed using brotli compression to further reduce the on-chain footprint of Arbitrum.
@@ -168,7 +156,7 @@ TX_ID=<tx id>
 
     echo $BATCH_TX_ID
     ```
-4. The sequencer submits the batch via the [addSequencerL2BatchFromOrigin](https://github.com/OffchainLabs/nitro/blob/v2.0.0/contracts/src/bridge/SequencerInbox.sol#L143) function on the SequencerInbox. The batch is the data field in the call data which starts at position 458 in the function args.
+4. The sequencer submits the batch via the [addSequencerL2BatchFromOrigin](https://github.com/OffchainLabs/nitro/blob/v2.0.0/contracts/src/bridge/SequencerInbox.sol#L143) function on the SequencerInbox. The batch is the data field in the call data. Given the fixed size of the other arguments we can be sure that the data field starts at position 458 in the call data. Let's download the data, then save everything after position 458 to file.
     ```
     BATCH_TX_DATA=$(cast tx --rpc-url $ETH_RPC $BATCH_TX_ID input)
     echo ${BATCH_TX_DATA:458} > txDataField.br
@@ -177,14 +165,13 @@ TX_ID=<tx id>
     ```
     tail -c +3 txDataField.br > compressedBatchData.br
     ```
-    Then decompress the rest by converting this hex string, then using brotli decompression, then converting back into hex
+    Then decompress the rest by converting this hex string, then using brotli decompression, then converting back into hex. This may output the warning `corrupt input [con]`, but you can ignore this. It's there due to trailing zeros in the input file, but doesn't affect the decompression.
     ```
     xxd -r -p compressedBatchData.br | brotli -d | xxd -c 200000000 -ps > batchData.txt
     ```
-    This may output the warning `corrupt input [con]`, but you can ignore this. It's there due to trailing zeros in the input file, but doesn't affect the decompression.
-6. Now that the batch has been decoded, lets effective the compression was. Run the following to print the size of the files:
+6. Now that the batch has been decoded, let's see how effective the compression was. Run the following to print the size of the files:
     ```
-    ls -sd --block-size=1 --format=single-column *
+    ls -l
     ```
     Now compare the size of `batchData.txt` with `compressedBatchData.br`
-7. Finally, open `batchData.txt` in a text editor, and see if you can find your RLP encoded transaction ($TX_RLP) in the data.
+7. Finally, open `batchData.txt` in a text editor. Can find your RLP encoded transaction - $TX_RLP - in the data?
