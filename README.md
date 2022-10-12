@@ -130,7 +130,9 @@ TX_ID=<tx id>
     echo $TX_RLP
     ```
 3. Count the bytes, it should be a similar number to one calculated from gas used
+    ```
     echo $(( (${#TX_RLP} - 2) / 2 ))
+    ```
 
 ### Step 5 - How to estimate L1 costs before sending
 1. The L2 transaction receipt contains a record of the amount of gas that was spent on L1 data costs. However, just like with L2 gas, developers need to be able to estimate how much L1 gas is required for a given transaction in order to set the correct gas limit. When calling `eth_estimateGas` on an Arbitrum node the returned value is the total amount of gas required - L2 gas + L1 gas in units of L2 gas. However it's possible to inspect the breakdown of this gas estimate by calling the [gasEstimateComponents](https://github.com/OffchainLabs/nitro/blob/v2.0.7/contracts/src/node-interface/NodeInterface.sol#L84) function on the NodeInterface contract at address 0x00000000000000000000000000000000000000C8.
