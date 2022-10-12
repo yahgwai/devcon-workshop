@@ -11,10 +11,17 @@ This workshop follows through sending transactions on Arbitrum, inspecting their
 * ArbOS precompiles - https://developer.arbitrum.io/arbos/precompiles
 
 ## Pre-requisites
-* An ethereum wallet
-* [curl](https://curl.se/)
+Please install the following, if you don't have them already
+* An ethereum wallet (eg metamasdk browser extension)
+* [curl](https://curl.se/) - probably installed by default
 * [Foundry](https://github.com/foundry-rs/foundry)
-* [jq](https://stedolan.github.io/jq/)
+    - run: `curl -L https://foundry.paradigm.xyz | bash`
+    - then run: `foundryup`
+* [jq](https://stedolan.github.io/jq/) - might be installed by default
+    - Mac OS can be installed with - `brew install jq`
+    - 
+
+You may need to open a new shell after installing these
 
 ## Setup
 In a new shell do the following:
@@ -22,7 +29,7 @@ In a new shell do the following:
     ```
     git clone git@github.com:yahgwai/devcon-workshop.git
     ```
-1. Test foundry exists
+1. Test foundry exists - if it doesn't foundry installed properly.
     ```
     cast --version
     ```
@@ -36,11 +43,11 @@ In a new shell do the following:
     ```
 2. Set the ARB_RPC env var
     ```
-    ARB_RPC=<arb rpc>
+    ARB_RPC=https://arb-mainnet.g.alchemy.com/v2/cAVH7BTBvbzIucuwkjbltCH-RxNkFCe1
     ```
 3. Set the ETH_RPC env var
     ```
-    ETH_RPC=<eth rpc>
+    ETH_RPC=https://mainnet.infura.io/v3/6faa1b9b8d274a7f96192e868a65f6d4
     ```
 
 
