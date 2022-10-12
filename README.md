@@ -100,7 +100,7 @@ TX_ID=<tx id>
     L1_BASE_FEE_EST=<l1 base fee estimate>
     ```
 
-### Step 4 - Getting the L2 base fee at the tx was sent
+### Step 4 - Getting the L2 base fee at the time the tx was sent
 1. In order to make the conversion we can fetch the base fee with cast:
     ```
     cast block --rpc-url $ARB_RPC $L2_BLOCKHASH baseFeePerGas

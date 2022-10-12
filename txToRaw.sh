@@ -9,8 +9,6 @@ array_string=""
 # format into an array, and pad zeros where necessary
 for i in "${arr[@]}"
 do
-    echo p $p
-    echo c $c
     p=$(echo $i | tr -d '"') # remove the quotes
     c=$(echo $p | cut -c 3-) # remove the 0x
     if [[ $p == "[]" ]]
@@ -36,7 +34,6 @@ do
 done
 array_string="[$array_string]"
 
-echo $array_string
 # use cast to rlp encode
 rlp=$(cast --to-rlp $array_string | cut -c 3-)
 
