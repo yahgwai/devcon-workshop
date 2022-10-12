@@ -50,7 +50,6 @@ In a new shell do the following:
     ETH_RPC=https://mainnet.infura.io/v3/6faa1b9b8d274a7f96192e868a65f6d4
     ```
 
-
 ## Step 1 - Send an L2 transaction
 Since this workshop involves comparing L1 and L2 gas it's more informative to use the values from mainnet and Arbitrum One, rather than testnets where gas price are artificially low. This means that we'll be sending a transaction on Arbitrum One, using real ETH. At the time of writing a transaction costs around ~$0.05, however if you don't have ETH available on Arbitrum One already you can still follow on with this workshop by using the following transaction hash wherever a transaction hash is required: `0xb6f34cb1a7ef3d6d2e062815df80b47a151cd10026227a7f5326912a257602bb`
 
@@ -72,7 +71,7 @@ TX_ID=<tx id>
     - `gasUsedForL1` - The amount of gas used to pay for l1 overheads, expressed in units of L2 gas.
 3. View the `gasUsedForL1` as a decimal.
     
-3. Store `gasUsedForL1` as decimal in an env var:
+3. Store `gasUsedForL1` from the transaction receipt as decimal in an env var:
     ```
     GAS_USED_L1=$((<tx.gasUsedForL1>))
     ```
@@ -115,7 +114,7 @@ TX_ID=<tx id>
     ```
     echo $(( $GAS_USED_L1 * $L2_BASE_FEE / $L1_BASE_FEE_EST ))
     ```
-You should get a value which is closer to the rough calculation we made in step 2.3.
+    You should get a value which is closer to the rough calculation we made in step 2.3.
 5. From the gas used we can also estimate the number bytes by [dividing by 16](https://eips.ethereum.org/EIPS/eip-2028):
     ```
     echo $(( $GAS_USED_L1 * $L2_BASE_FEE / $L1_BASE_FEE_EST / 16 ))
