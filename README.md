@@ -83,7 +83,7 @@ TX_ID=<tx id>
 4. Also store the value of blockhash and block number for later use:
     ```
     L2_BLOCKHASH=<tx.blockHash>
-    L2_BLOCKNUM=<tx.blocknumber>
+    L2_BLOCKNUM=<tx.blockNumber>
     ```
 
 ### Step 3 - Getting the L1 base fee estimate as seen on L2
@@ -134,7 +134,7 @@ TX_ID=<tx id>
 
 ### Step 5 - How to estimate L1 costs before sending
 1. The L2 transaction receipt contains a record of the amount of gas that was spent on L1 data costs. However, just like with L2 gas, developers need to be able to estimate how much L1 gas is required for a given transaction in order to set the correct gas limit. When calling `eth_estimateGas` on an Arbitrum node the returned value is the total amount of gas required - L2 gas + L1 gas in units of L2 gas. However it's possible to inspect the breakdown of this gas estimate by calling the [gasEstimateComponents](https://github.com/OffchainLabs/nitro/blob/v2.0.7/contracts/src/node-interface/NodeInterface.sol#L84) function on the NodeInterface contract at address 0x00000000000000000000000000000000000000C8.
-2. Lets first get the input arguments we need to call the NodeInterface.
+2. Let's first get the input arguments we need to call the NodeInterface.
     ```
     TX_DATA=$(cast tx --rpc-url $ARB_RPC $TX_ID input)
     echo $TX_DATA
