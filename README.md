@@ -2,13 +2,6 @@
 
 This workshop follows through sending transactions on Arbitrum and inspecting their lifecycle and how much gas they use.
 
-## TODO
-* Create a burner project for the ethereum rpc
-* Note about how we're using L2 and Arbitrum synonymously here, but how this differes in other L2 systems
-* fill in the steps for sending a tx
-* remove the eth rpc? we dont use it?
-* fromBlock can be set to genesis blocl
-
 ## Useful links
 * Arbitrum One RPC - https://arb-mainnet.g.alchemy.com/v2/cAVH7BTBvbzIucuwkjbltCH-RxNkFCe1
 * Ethereum RPC - https://mainnet.infura.io/v3/6faa1b9b8d274a7f96192e868a65f6d4
