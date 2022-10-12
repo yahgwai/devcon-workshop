@@ -11,7 +11,7 @@ This workshop follows through sending transactions on Arbitrum, inspecting their
 * ArbOS precompiles - https://developer.arbitrum.io/arbos/precompiles
 * RLP encoding - https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/
 
-## Pre-requisites
+## Prerequisites
 Please install the following, if you don't have them already
 * An ethereum wallet (eg metamasdk browser extension)
 * [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - version control system
