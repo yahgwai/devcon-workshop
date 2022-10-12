@@ -1,6 +1,6 @@
 # Demystifying L2 transactions
 
-This workshop follows through sending transactions on Arbitrum and inspecting their lifecycle and how much gas they use.
+This workshop follows through sending transactions on Arbitrum, inspecting their lifecycle and how much gas they use.
 
 ## Useful links
 * Arbitrum One RPC - https://arb-mainnet.g.alchemy.com/v2/cAVH7BTBvbzIucuwkjbltCH-RxNkFCe1
@@ -180,6 +180,3 @@ You should get a value which is closer to the rough calculation we made in step 
     ```
     Now compare the size of `batchData.txt` with `compressedBatchData.br`
 7. Finally, open `batchData.txt` in a text editor, and see if you can find your RLP encoded transaction ($TX_RLP) in the data.
-
-
-02f8ae82a4b14e8084080befc0830614f694fc5a1a6eb076a2c7ad06ed22c90d7e710e35ad0a80b844095ea7b3000000000000000000000000908c4d94d34924765f1edc22a1dd098397c59dd4ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc001a0e92455d3800eb581707dcef896b793903770c8cc476c357d15b0fe5f9b8638dda039764018d986ffb3f2f4eb1463641dd2396907297a4ba90dfe662ce6bdb87c6c
