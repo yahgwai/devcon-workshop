@@ -110,7 +110,7 @@ TX_ID=<tx id>
     ```
     cast block --rpc-url $ARB_RPC $L2_BLOCKHASH baseFeePerGas
     ```
-2. Gas on Arbitrum is usually much lower than on L2. It also has a hard coded minimum of 0.1 Gwei, which you may be observing now.
+2. Gas on Arbitrum is usually much lower than on L1. It also has a hard coded minimum of 0.1 Gwei, which you may be observing now.
 3. Store the result in an env var
     ```
     L2_BASE_FEE=<l2 base fee>
