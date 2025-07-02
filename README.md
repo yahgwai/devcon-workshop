@@ -5,8 +5,8 @@ This workshop follows through sending transactions on Arbitrum, inspecting their
 ## Useful links
 * Arbitrum One RPC - https://arb-mainnet.g.alchemy.com/v2/cAVH7BTBvbzIucuwkjbltCH-RxNkFCe1
 * Ethereum RPC - https://mainnet.infura.io/v3/6faa1b9b8d274a7f96192e868a65f6d4
-* Follow along tx id if not sending your own-  `0xb6f34cb1a7ef3d6d2e062815df80b47a151cd10026227a7f5326912a257602bb`
-* L1/L2 gas -https://developer.arbitrum.io/arbos/gas
+* Follow along tx id if not sending your own - `0xb6f34cb1a7ef3d6d2e062815df80b47a151cd10026227a7f5326912a257602bb`
+* L1/L2 gas - https://developer.arbitrum.io/arbos/gas
 * Transaction lifecycle - https://developer.arbitrum.io/tx-lifecycle
 * ArbOS precompiles - https://developer.arbitrum.io/arbos/precompiles
 * RLP encoding - https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/
@@ -21,10 +21,10 @@ Please install the following, if you don't have them already
     - followed by `foundryup`
 * [jq](https://stedolan.github.io/jq/) - might be installed by default
     - Mac OS - `brew install jq`
-    - Ubuntu - `apt get install jq` 
+    - Ubuntu - `apt-get install jq` 
 * [brotli](https://github.com/google/brotli) - compression algorithm
     - Mac OS - `brew install brotli`
-    - Ubuntu - `apt get install brotli` 
+    - Ubuntu - `apt-get install brotli` 
 
 You may need to open a new shell after installing these
 
@@ -34,7 +34,7 @@ In a new shell do the following:
     ```
     git clone git@github.com:yahgwai/devcon-workshop.git
     ```
-1. Test foundry exists - if it doesn't foundry installed properly.
+1. Test foundry exists - if it doesn't, foundry didn't install properly.
     ```
     cast --version
     ```
@@ -64,7 +64,7 @@ Once you've chosen a transaction hash to use, set it as an environment variable
 TX_ID=<tx id>
 ```
 
-## Step 2 - Inpect the transaction receipt
+## Step 2 - Inspect the transaction receipt
 1. Get the transaction receipt by calling the ARB_ONE rpc, and prettify with jq.
     ```
     curl -s -X POST -H "Content-Type: application/json" \
@@ -84,7 +84,7 @@ TX_ID=<tx id>
     ```
     echo $GAS_USED_L1
     ```
-    Is the value what you expected? You might have expected this value to be much lower as all we need L1 gas for is to pay for call data. Call data is only 16 gas per byte, and standard token transfer only has around 190 bytes when [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encoded. A quick calculation shows that we should have expected to use around 16 * 180 = 2880 units of l1 gas which probably isn't the same order of magnitude as the value you have for `gasUsedForL1`. But remember that although `gasUsedForL1` pays for L1 costs, it is in units of L2 gas. We'll explore that concept more in the nexts stepts.
+    Is the value what you expected? You might have expected this value to be much lower as all we need L1 gas for is to pay for call data. Call data is only 16 gas per byte, and standard token transfer only has around 190 bytes when [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encoded. A quick calculation shows that we should have expected to use around 16 * 180 = 2880 units of l1 gas which probably isn't the same order of magnitude as the value you have for `gasUsedForL1`. But remember that although `gasUsedForL1` pays for L1 costs, it is in units of L2 gas. We'll explore that concept more in the next steps.
 4. Also store the value of blockhash and block number for later use:
     ```
     L2_BLOCKHASH=<tx.blockHash>
@@ -92,7 +92,7 @@ TX_ID=<tx id>
     ```
 
 ### Step 3 - Getting the L1 base fee estimate as seen on L2
-1. Lets try to convert `gasUsedForL1` from units of L2 gas to L1 gas to see if the amount matches up with our rought estimate above. To do that we need to find out:
+1. Lets try to convert `gasUsedForL1` from units of L2 gas to L1 gas to see if the amount matches up with our rough estimate above. To do that we need to find out:
     - What the L1 base fee was at the time, as seen by the L2
     - What the L2 base fee was at the time
 2. The L2 periodically receives information about the L1 base fee and updates it's local view. It also adjusts it based on how the accuracy of previous estimates. You can read more about this process [here]( https://developer.arbitrum.io/arbos/l1-pricing#adjusting-the-l1-gas-basefee).
@@ -127,7 +127,7 @@ TX_ID=<tx id>
 
 ### Step 5 - comparison to actual bytes
 1. We can now [RLP](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) encode the transaction and measure the number of bytes. Note that we don't expect this to be exactly the same due to a number of reasons:
-    - The gas used for L1 includes some compression factor - this isn't as high as when we the transaction is included in a batch, but it is a factor
+    - The gas used for L1 includes some compression factor - this isn't as high as when the transaction is included in a batch, but it is a factor
     - There is also a small amount L1 gas that must be paid for batch overheads
 2. RLP encode the transaction:
     ```
@@ -174,4 +174,4 @@ TX_ID=<tx id>
     ls -l
     ```
     Now compare the size of `batchData.txt` with `compressedBatchData.br`
-7. Finally, open `batchData.txt` in a text editor. Can find your RLP encoded transaction - $TX_RLP - in the data?
+7. Finally, open `batchData.txt` in a text editor. Can you find your RLP encoded transaction - $TX_RLP - in the data?
